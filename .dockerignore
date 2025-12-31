@@ -1,0 +1,54 @@
+# .dockerignore - Files to exclude from Docker build context
+#
+# This reduces build context size and prevents sensitive or unnecessary
+# files from being copied into the Docker image.
+
+# Dependencies (will be installed fresh in container)
+node_modules/
+
+# Development and test files
+test/
+*.test.js
+jest.config.*
+.eslintrc*
+.prettierrc*
+coverage/
+
+# Git
+.git/
+.gitignore
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment files (security)
+.env
+.env.*
+*.pem
+*.key
+
+# Documentation that's not needed in container
+*.md
+!README.md
+LICENSE
+
+# Build artifacts
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Docker files (not needed inside container)
+Dockerfile
+docker-compose*.yml
+.dockerignore
