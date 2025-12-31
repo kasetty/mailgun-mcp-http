@@ -87,19 +87,58 @@ This server can be deployed to Obot's MCP Gateway platform using HTTP Streaming 
 
 #### Obot MCP Gateway Configuration
 
-1. Push your container to a registry (Docker Hub, GitHub Container Registry, etc.):
-   ```bash
-   docker tag mailgun-mcp-server your-registry/mailgun-mcp-server:latest
-   docker push your-registry/mailgun-mcp-server:latest
-   ```
+##### Step 1: Push to Container Registry
 
-2. In Obot MCP Gateway, add a new **Containerized** MCP server:
-   - **Image**: `your-registry/mailgun-mcp-server:latest`
-   - **Port**: `3000`
-   - **Path**: `/mcp`
-   - **Environment Variables**:
-     - `TRANSPORT`: `http`
-     - `MAILGUN_API_KEY`: (configure as user-supplied or shared)
+Push your container to a registry (Docker Hub, GitHub Container Registry, etc.):
+
+```bash
+# Tag for GitHub Container Registry
+docker tag mailgun-mcp-server ghcr.io/YOUR_USERNAME/mailgun-mcp-server:latest
+docker push ghcr.io/YOUR_USERNAME/mailgun-mcp-server:latest
+
+# Or for Docker Hub
+docker tag mailgun-mcp-server docker.io/YOUR_USERNAME/mailgun-mcp-server:latest
+docker push docker.io/YOUR_USERNAME/mailgun-mcp-server:latest
+```
+
+##### Step 2: Add MCP Server in Obot
+
+In the Obot MCP Gateway UI, add a new **Containerized** MCP server with:
+
+| Field | Value |
+|-------|-------|
+| **Image** | `ghcr.io/YOUR_USERNAME/mailgun-mcp-server:latest` |
+| **Port** | `3000` |
+| **Path** | `/mcp` |
+
+> **Note**: The Docker image defaults to HTTP transport mode, so no additional environment variables are needed for transport configuration.
+
+##### Step 3: Configure User-Supplied API Key
+
+In the **User Credentials** section of the MCP server configuration, add a parameter for the Mailgun API key:
+
+| Field | Value |
+|-------|-------|
+| **Name** | `Mailgun API Key` |
+| **Description** | `Your Mailgun API key for sending emails and accessing the API` |
+| **Key** | `MAILGUN_API_KEY` |
+| **Required** | ✅ Check this box |
+| **Sensitive** | ✅ Check this box |
+
+This configuration will:
+- Prompt users to enter their Mailgun API key when adding the server to their agent
+- Securely pass the API key as an environment variable to the container
+- Mask the value in logs and UI (since it's marked as sensitive)
+
+##### Alternative: Shared Credentials (Multi-User)
+
+For organizational deployments where all users share the same Mailgun account, you can pre-configure the API key in the **Environment Variables** section instead:
+
+| Key | Value |
+|-----|-------|
+| `MAILGUN_API_KEY` | `your-shared-api-key` |
+
+This approach deploys the API key with the server instance, so users don't need to provide their own.
 
 #### Running without Docker (HTTP mode)
 
